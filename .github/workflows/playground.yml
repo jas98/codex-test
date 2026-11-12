@@ -1,0 +1,31 @@
+name: Actions playground
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      greeting:
+        description: Message to print
+        required: false
+        default: Hello from GitHub Actions!
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Print greeting and run details
+        env:
+          GREETING: ${{ inputs.greeting || 'Hello from GitHub Actions!' }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPOSITORY: ${{ github.repository }}
+          REF: ${{ github.ref }}
+        run: |
+          printf '%s\n' "$GREETING"
+          printf 'Event: %s\nRepository: %s\nRef: %s\n' "$EVENT_NAME" "$REPOSITORY" "$REF"
+          printf '## Actions playground\n\nWorkflow ran successfully.\n' >> "$GITHUB_STEP_SUMMARY"
